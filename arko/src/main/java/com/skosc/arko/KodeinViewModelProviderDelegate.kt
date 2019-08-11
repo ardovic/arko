@@ -12,7 +12,16 @@ class KodeinViewModelProviderDelegate<VM : ViewModel>(
     private val factoryProvider: (Kodein) -> KodeinProperty<KodeinViewModelProviderFactory<VM>>,
     private val cls: Class<VM>
 ) {
+    var instance: VM? = null
+
     operator fun getValue(thisRef: KodeinAware, property: KProperty<*>): VM {
+        if (instance == null) {
+            instance = createViewModel(thisRef)
+        }
+        return instance!! // Usually accessed on main thread, so no race condition
+    }
+
+    private fun createViewModel(thisRef: KodeinAware): VM {
         val factory by factoryProvider.invoke(thisRef.kodein)
         val provider = when (thisRef) {
             is ViewModelStoreOwner -> ViewModelProvider(thisRef, factory)
@@ -22,6 +31,8 @@ class KodeinViewModelProviderDelegate<VM : ViewModel>(
 
         return provider.get(cls)
     }
+
+
 }
 
 inline fun <reified T : ViewModel> viewModel(): KodeinViewModelProviderDelegate<T> {
