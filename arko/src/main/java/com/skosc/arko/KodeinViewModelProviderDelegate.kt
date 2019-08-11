@@ -9,7 +9,7 @@ import org.kodein.di.generic.instance
 import kotlin.reflect.KProperty
 
 class KodeinViewModelProviderDelegate<VM : ViewModel>(
-    private val factoryProvider: (Kodein) -> KodeinProperty<KodeinViewModelProviderFactory<VM>>,
+    private val factoryProvider: (Kodein) -> KodeinProperty<IKodeinViewModelProviderFactory<VM>>,
     private val cls: Class<VM>
 ) {
     var instance: VM? = null
@@ -31,11 +31,18 @@ class KodeinViewModelProviderDelegate<VM : ViewModel>(
 
         return provider.get(cls)
     }
-
-
 }
 
 inline fun <reified T : ViewModel> viewModel(): KodeinViewModelProviderDelegate<T> {
-    val provider = { kodein: Kodein -> kodein.instance<KodeinViewModelProviderFactory<T>>() }
+    val provider = { kodein: Kodein -> kodein.instance<IKodeinViewModelProviderFactory<T>>() }
+    return KodeinViewModelProviderDelegate(provider, T::class.java)
+}
+
+inline fun <reified A : Any, reified T : ViewModel> viewModel(crossinline arg: () -> A): KodeinViewModelProviderDelegate<T> {
+    val provider = { kodein: Kodein ->
+        kodein.instance<A, IKodeinViewModelProviderFactory<T>>(
+            arg = arg.invoke()
+        )
+    }
     return KodeinViewModelProviderDelegate(provider, T::class.java)
 }

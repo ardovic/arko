@@ -6,6 +6,5 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 
 val MainModule = Kodein.Module("name", false, "prefix") {
-    bind<Sumator>() with provider { Sumator() }
-    bindViewModel<MainViewModel>() with viewModelProvider { MainViewModel(instance()) }
+    bindViewModel<MainViewModel>() with viewModelFactory { sum: Sumator -> MainViewModel(sum) }
 }

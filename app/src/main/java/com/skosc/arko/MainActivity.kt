@@ -9,7 +9,7 @@ import org.kodein.di.KodeinAware
 
 class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein = Kodein.lazy { import(MainModule) }
-    private val vm: MainViewModel by viewModel()
+    private val vm: MainViewModel by viewModel { Sumator() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
