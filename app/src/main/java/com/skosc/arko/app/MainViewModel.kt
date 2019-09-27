@@ -1,4 +1,4 @@
-package com.skosc.arko
+package com.skosc.arko.app
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

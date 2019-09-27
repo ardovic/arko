@@ -1,5 +1,7 @@
 package com.skosc.arko
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
@@ -23,12 +25,14 @@ class KodeinViewModelProviderDelegate<VM : ViewModel>(
 
     private fun createViewModel(thisRef: KodeinAware): VM {
         val factory by factoryProvider.invoke(thisRef.kodein)
-        val provider = when (thisRef) {
-            is ViewModelStoreOwner -> ViewModelProvider(thisRef, factory)
-            is ViewModelStore -> ViewModelProvider(thisRef, factory)
-            else -> throw IllegalArgumentException("This delegate only supports ViewModelStoreOwners and ViewModelStores")
+
+        val owner = when(thisRef) {
+            is Fragment -> thisRef.requireActivity()
+            is AppCompatActivity -> thisRef
+            else -> thisRef as ViewModelStoreOwner
         }
 
+        val provider = ViewModelProvider(owner, factory)
         return provider.get(cls)
     }
 }

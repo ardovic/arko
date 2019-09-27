@@ -1,8 +1,9 @@
-package com.skosc.arko
+package com.skosc.arko.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import com.skosc.arko.viewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
